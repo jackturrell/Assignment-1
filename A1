@@ -1,0 +1,38 @@
+def generate_bracelet(num1, num2, limit):
+    bracelet = [num1, num2]
+    
+    while True:
+        next_num = (bracelet[-1] + bracelet[-2]) % 10
+        next_num1 = (bracelet[0] + bracelet[-1]) % 10
+        if next_num == bracelet[0] and next_num1 == bracelet[1]:
+            break
+        bracelet.append(next_num)
+        
+    return bracelet
+
+def rotate_bracelet(bracelet):
+    min_index = bracelet.index(min(bracelet))
+    return bracelet[min_index:] + bracelet[:min_index]
+
+def print_bracelets(limit):
+    bracelet_groups = {}
+    group_counter = 1
+
+    for num1 in range(0, 10):
+        for num2 in range(0, 10):
+            bracelet = generate_bracelet(num1, num2, limit)
+            rotated_bracelet = tuple(sorted(rotate_bracelet(bracelet)))
+            
+            if rotated_bracelet not in bracelet_groups:
+                bracelet_groups[rotated_bracelet] = []
+            bracelet_groups[rotated_bracelet].append((num1, num2, bracelet))
+
+    for key in sorted(bracelet_groups.keys()):
+        print(f'Group {group_counter}:')
+        for num1, num2, bracelet in bracelet_groups[key]:
+            print(f'   Starting with {num1} and {num2}: {bracelet}')
+        print()
+        group_counter += 1
+
+limit = 100
+print_bracelets(limit)
