@@ -1,0 +1,63 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.linalg as LA
+from itertools import permutations
+
+def generate_matrices(size, num_zeros, num_ones):
+    if size * size != num_zeros + num_ones:
+        print("Error: Invalid combination of zeros and ones.")
+        return []
+
+    perm = permutations([0] * num_zeros + [1] * num_ones)
+    matrices = set()
+
+    for p in perm:
+        matrix = [list(p[i:i+size]) for i in range(0, size*size, size)]
+        matrices.add(tuple(map(tuple, matrix)))
+
+    return list(matrices)
+
+def calculate_determinants(matrices):
+    determinants = []
+    for matrix in matrices:
+        detA = LA.det(matrix)
+        determinants.append(detA)
+    return determinants
+
+def main():
+    size = int(input("Enter the size of the matrix: "))
+    num_zeros = int(input("Enter the number of zeros: "))
+    num_ones = int(input("Enter the number of ones: "))
+
+    matrices = generate_matrices(size, num_zeros, num_ones)
+    matrix_count = len(matrices)
+    print("Matrices generated:")
+    for matrix in matrices:
+        for row in matrix:
+            print(row)
+        print()
+
+    print(f"Total number of matrices generated: {matrix_count}")
+
+    determinants = calculate_determinants(matrices)
+
+    Max = max(determinants)
+    Min = min(determinants)
+    bins = np.arange(Min, Max+2)-0.5
+
+    fig, ax = plt.subplots(1,1)
+
+    Data, _ , _ = ax.hist(determinants, bins, rwidth=0.8, color='orange')
+    ax.set_xlim(Min-1, Max+1)
+    ax.set_xticks(np.arange(Min, Max+1))
+    ax.set_xlabel('Determinant')
+    ax.set_ylabel('Count')
+    plt.grid(True)
+    plt.show()
+    
+    print("Histogram values:")
+    for i, count in enumerate(Data):
+        print(f"Bin {i}: {int(count)}")
+
+if __name__ == "__main__":
+    main()
